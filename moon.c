@@ -1,5 +1,7 @@
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <time.h>
 
@@ -16,8 +18,8 @@ Moon* moon_create() {
     moon = (Moon*) calloc (1, sizeof(Moon));
     if(!moon) return NULL;
 
-    moon->phase = NEW;
-    moon->cycle = WAXING;
+    moon->phase = UNKNOWN_PHASE;
+    moon->cycle = UNKNOWN_CYCLE;
 
     return moon;
 }
@@ -26,9 +28,10 @@ void moon_destroy(Moon *moon) {
     if(!moon) return;
 
     free(moon);
+    moon = NULL;
 }
 
-Status moon_update(Moon *moon, time_t time);
+Status moon_update(Moon *moon, time_t now);
 
 Phases moon_get_phase(Moon *moon) {
     if(!moon) return UNKNOWN_PHASE;
@@ -44,8 +47,8 @@ Cycle  moon_get_cycle(Moon *moon) {
 
 #ifdef DEBUG
 void moon_print(Moon *moon) {
-    char *phase;
-    char *cycle;
+    char phase[MAX_CHAR];
+    char cycle[MAX_CHAR];
     
     if(moon->phase == UNKNOWN_PHASE) strcpy(phase, "UNKNOWN_PHASE");
     if(moon->phase == NEW) strcpy(phase, "NEW");
@@ -53,6 +56,7 @@ void moon_print(Moon *moon) {
     if(moon->phase == QUARTER) strcpy(phase, "QUARTER");
     if(moon->phase == GIBBOUS) strcpy(phase, "GIBBOUS");
     if(moon->phase == FULL) strcpy(phase, "FULL");
+
     if(moon->cycle == UNKNOWN_CYCLE) strcpy(cycle, "UNKNOWN_CYCLE");
     if(moon->cycle == WAXING) strcpy(cycle, "WAXING");
     if(moon->cycle == WANING) strcpy(cycle, "WANING");

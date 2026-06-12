@@ -12,7 +12,7 @@ Moon* moon_create();
 
 void moon_destroy(Moon *moon);
 
-Status moon_update(Moon *moon, time_t time);
+Status moon_update(Moon *moon, time_t now);
 
 Phases moon_get_phase(Moon *moon);
 
