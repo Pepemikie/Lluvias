@@ -39,6 +39,7 @@ struct _Shower { /* Estructura con la informacion que se pasará a otros modulos
     int days_until;
     ShowerArray showers[MAX_SHOWERS];
     int num_showers;
+    //int next_index; /* Para futuro, poder ver las siguientes lluvias de estrellas */
 };
 
 /* PRIVADAS */
@@ -49,9 +50,9 @@ struct _Shower { /* Estructura con la informacion que se pasará a otros modulos
  * @return El rango de intensidad de la propia lluvia de estrellas 
  */
 static ShowerIntensity num_comets_to_intensity(int num_comets) { /* Pasa el número de cometas a una intensidad definida */
-    if(num_comets <= 50) return NO_SHOWER;
-    else if(num_comets <= 100) return MINOR;
-    else if(num_comets <= 150) return MODERATE;
+    if(num_comets <= 10) return NO_SHOWER;
+    else if(num_comets <= 50) return MINOR;
+    else if(num_comets <= 100) return MODERATE;
 
     return MAJOR;
 }
@@ -77,7 +78,7 @@ static Bool shower_is_visible(ShowerIntensity intensity, Phases moon_phase) { /*
             if(moon_phase == FULL) return FALSE;
             return TRUE;
         case MODERATE:
-            if(moon_phase == FULL || moon_phase == GIBBOUS) return FALSE;
+            if(moon_phase == FULL) return FALSE;
             return TRUE;
         case MINOR:
             if(moon_phase == NEW || moon_phase == CRESCENT) return TRUE;
@@ -122,14 +123,17 @@ static int days_between(struct tm *now, int day, int month, int year) { /* Calcu
     if(!now) return -1;
 
     event.tm_mday = day;
-    event.tm_mon  = month - 1;
+    event.tm_mon = month - 1;
     event.tm_year = year - 1900;
     event.tm_hour = 0;
+    event.tm_isdst = -1;
 
     time_t t_event = mktime(&event);
-    time_t t_now   = mktime(now);
+    time_t t_now = mktime(now);
 
+    if(t_event == ((time_t) - 1) || t_now == ((time_t) - 1)) return -1;
     double diff = difftime(t_event, t_now);
+
     return (int)(diff / DAY_IN_SEC);
 }
 
@@ -211,7 +215,7 @@ static Status shower_find_next(Shower *shower, struct tm now, Phases moon_phase)
         days = days_between(&now, shower->showers[i].day, shower->showers[i].month, shower->showers[i].year);
         if(days < 0) continue;  /* Ya pasó el evento */
 
-        if(shower_is_visible(num_comets_to_intensity(shower->showers[i].num_comets), moon_phase) == FALSE) continue;  /* luna la fastidia demasiado */
+        /*if(shower_is_visible(num_comets_to_intensity(shower->showers[i].num_comets), moon_phase) == FALSE) continue;*/  /* luna la fastidia demasiado (pero no es error)*/
 
         if(prox_index == -1 || days < prox_days) { /* Para el caso base, y para cuando guardar el dia mas proximo */
             prox_days  = days;
@@ -222,7 +226,6 @@ static Status shower_find_next(Shower *shower, struct tm now, Phases moon_phase)
     if(prox_index == -1) return ERROR;  /* No hay mas lluvias de estrellas en el fichero */
 
     prox = &shower->showers[prox_index];
-
     /* Se pasa la info del auxiliar al principal (el publico) */
     strncpy(shower->shower_name, prox->name, MAX_CHAR - 1);
     shower->shower_name[MAX_CHAR - 1] = '\0';
@@ -273,7 +276,6 @@ Status shower_load(Shower *shower) {
 /* Actualiza la información de la próxima lluvia */
 Status shower_update(Shower *shower, struct tm now, Phases moon_phase) {
     if(!shower) return ERROR;
-
     return shower_find_next(shower, now, moon_phase);
 }
 
