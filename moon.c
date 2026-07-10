@@ -31,7 +31,9 @@ void moon_destroy(Moon *moon) {
     moon = NULL;
 }
 
-Status moon_update(Moon *moon, time_t now);
+Status moon_update(Moon *moon, time_t now) {
+    
+}
 
 Phases moon_get_phase(Moon *moon) {
     if(!moon) return UNKNOWN_PHASE;
