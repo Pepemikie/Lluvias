@@ -19,7 +19,6 @@
 
 #define MAX_SHOWERS 1000
 #define SHOWER_FILE "shower.dat"
-#define DAY_IN_SEC 86400.0
 
 typedef struct { /* Estructura para almacenar información de cada lluvia de estrellas sin procesar */
     char name[MAX_CHAR];

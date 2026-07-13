@@ -2,6 +2,7 @@
 #define TYPES_H
 
 #define MAX_CHAR 32
+#define DAY_IN_SEC 86400.0
 
 typedef enum {FALSE, TRUE} Bool;
 

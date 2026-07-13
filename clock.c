@@ -24,7 +24,10 @@ https://www.ibm.com/docs/es/i/7.5.0?topic=functions-localtime-r-convert-time-res
 #include "clock.h"
 
 time_t clock_now() {
-    return time(NULL);
+    time_t now = time(NULL);
+    if(now == ((time_t) - 1)) return (time_t) - 1;
+
+    return now;
 }
 
 struct tm clock_get_local(time_t now) {

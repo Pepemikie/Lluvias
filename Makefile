@@ -1,13 +1,13 @@
 all: athmosphere
 
-athmosphere: main.o shower.o #moon.o state.o clock.o arduino.o
-	gcc main.o shower.o -o athmosphere
-#moon.o state.o clock.o arduino.o
+athmosphere: main.o shower.o moon.o #state.o clock.o arduino.o
+	gcc main.o shower.o moon.o -o athmosphere -lm
+# state.o clock.o arduino.o
 main.o: main.c
 	gcc -Wall -c main.c -o main.o
 
-#moon.o: moon.c
-#	gcc -Wall moon.o -c moon.c
+moon.o: moon.c
+	gcc -Wall -c moon.c -o moon.o
 
 shower.o: shower.c
 	gcc -Wall -c shower.c -o shower.o

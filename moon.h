@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 #include "types.h"
 
@@ -17,6 +18,10 @@ Status moon_update(Moon *moon, time_t now);
 Phases moon_get_phase(Moon *moon);
 
 Cycle moon_get_cycle(Moon *moon);
+
+int moon_get_days_until_full(Moon *moon);
+
+int moon_get_days_until_new(Moon *moon);
 
 #ifdef DEBUG
 void moon_print(Moon *moon);
