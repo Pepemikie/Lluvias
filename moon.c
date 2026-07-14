@@ -27,9 +27,6 @@ static Phases moon_calculate_phase(time_t now) {
 
     if(phase < 0) phase += MOON_CYCLE_DAYS;
 
-    printf("phase position: %f\n", phase);  // debug temporal
-
-
     if(phase < 1.84566) return NEW;
     else if(phase < 5.53699) return CRESCENT;
     else if(phase < 9.22831) return QUARTER;

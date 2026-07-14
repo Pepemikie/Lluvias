@@ -46,10 +46,28 @@ Status shower_load(Shower *shower);
  * 
  * @param shower puntero a la estructura Shower 
  * @param now estructura tm, de la libreria time
- * @param moon_phase fase lunar
  * @return OK si sale bien, ERROR si algo sale mal 
  */
-Status shower_update(Shower *shower, struct tm now, Phases moon_phase);
+Status shower_update(Shower *shower, struct tm now);
+
+/**
+ * @brief Actualiza la visibilidad de la lluvia según la fase lunar
+ * 
+ * @param shower puntero a la estructura Shower
+ * @param moon_phase la fase lunar
+ * @return OK si sale bien, ERROR si algo sale mal  
+ */
+Status shower_update_visibility(Shower *shower, Phases moon_phase);
+
+/**
+ * @brief Obtiene la fecha y hora del próximo evento de lluvia de estrellas
+ * 
+ * @param shower puntero a la estructura Shower
+ * @return time_t con la fecha y hora del próximo evento, o (time_t)-1 si hay un error 
+ */
+time_t shower_get_event_time(Shower *shower);
+
+Status shower_next(Shower *shower, struct tm now);
 
 /**
  * @brief Obtiene el nombre de la lluvia

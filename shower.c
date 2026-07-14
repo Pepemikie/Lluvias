@@ -38,7 +38,7 @@ struct _Shower { /* Estructura con la informacion que se pasará a otros modulos
     int days_until;
     ShowerArray showers[MAX_SHOWERS];
     int num_showers;
-    //int next_index; /* Para futuro, poder ver las siguientes lluvias de estrellas */
+    int next_index; /* Para futuro, poder ver las siguientes lluvias de estrellas */
 };
 
 /* PRIVADAS */
@@ -198,17 +198,16 @@ static Status shower_load_array(Shower *shower) { /* Carga los datos de las lluv
  * 
  * @param shower puntero a la estructura Shower
  * @param now la fecha exacta
- * @param moon_phase la fase lunar
  * @return OK si sale bien, ERROR si algo sale mal 
  */
-static Status shower_find_next(Shower *shower, struct tm now, Phases moon_phase) { /* Encuentra la próxima lluvia y calcula sus datos */
+static Status shower_find_next(Shower *shower, struct tm now) { /* Encuentra la próxima lluvia y calcula sus datos */
     ShowerArray *prox = NULL; /* La lluvia mas proxima (auxiliar) */
     int prox_days = -1;
     int prox_index = -1;
     int days = -1;
     int i;
 
-    if(!shower || shower->num_showers <= 0 || moon_phase == UNKNOWN_PHASE) return ERROR;
+    if(!shower || shower->num_showers <= 0) return ERROR;
 
     for(i = 0; i < shower->num_showers; i++) {
         days = days_between(&now, shower->showers[i].day, shower->showers[i].month, shower->showers[i].year);
@@ -225,13 +224,14 @@ static Status shower_find_next(Shower *shower, struct tm now, Phases moon_phase)
     if(prox_index == -1) return ERROR;  /* No hay mas lluvias de estrellas en el fichero */
 
     prox = &shower->showers[prox_index];
-    /* Se pasa la info del auxiliar al principal (el publico) */
+    shower->next_index = prox_index;
+    /* Se pasa la info del auxiliar al que es publico parael main */
     strncpy(shower->shower_name, prox->name, MAX_CHAR - 1);
     shower->shower_name[MAX_CHAR - 1] = '\0';
     shower->intensity = num_comets_to_intensity(prox->num_comets);
-    shower->visible = shower_is_visible(shower->intensity, moon_phase);
-    shower->peak_hour  = prox->peak_hour;
+    shower->peak_hour = prox->peak_hour;
     shower->days_until = prox_days;
+    shower->visible = FALSE;
 
     return OK;
 }
@@ -273,9 +273,55 @@ Status shower_load(Shower *shower) {
 }
 
 /* Actualiza la información de la próxima lluvia */
-Status shower_update(Shower *shower, struct tm now, Phases moon_phase) {
+Status shower_update(Shower *shower, struct tm now) {
     if(!shower) return ERROR;
-    return shower_find_next(shower, now, moon_phase);
+    return shower_find_next(shower, now);
+}
+
+Status shower_update_visibility(Shower *shower, Phases moon_phase) {
+    if(!shower) return ERROR;
+    if(moon_phase == UNKNOWN_PHASE) return ERROR;
+
+    shower->visible = shower_is_visible(shower->intensity, moon_phase);
+    return OK;
+}
+
+time_t shower_get_event_time(Shower *shower) {
+    ShowerArray *s = NULL;
+    struct tm event = {0};
+
+    if(!shower) return (time_t)-1;
+    if(shower->next_index < 0 || shower->next_index >= shower->num_showers) return (time_t)-1;
+
+    s = &shower->showers[shower->next_index];
+    event.tm_mday = s->day;
+    event.tm_mon = s->month - 1;
+    event.tm_year = s->year - 1900;
+    event.tm_hour = s->peak_hour;
+    event.tm_isdst = -1;
+
+    return mktime(&event);
+}
+
+Status shower_next(Shower *shower, struct tm now) {
+    ShowerArray *s = NULL;
+
+    if(!shower) return ERROR;
+    if(shower->next_index + 1 >= shower->num_showers) return ERROR;
+
+    shower->next_index++;
+
+    s = &shower->showers[shower->next_index];
+
+    strncpy(shower->shower_name, s->name, MAX_CHAR - 1);
+    shower->shower_name[MAX_CHAR - 1] = '\0';
+
+    shower->intensity = num_comets_to_intensity(s->num_comets);
+    shower->peak_hour = s->peak_hour;
+    shower->days_until = days_between(&now, s->day, s->month, s->year);
+    shower->visible = FALSE;
+
+    return OK;
 }
 
 /* GETTERS */

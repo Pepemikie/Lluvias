@@ -1,7 +1,7 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <types.h>
+#include "types.h"
 #include <time.h>
 
 time_t clock_now();
