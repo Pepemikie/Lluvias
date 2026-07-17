@@ -108,6 +108,9 @@ Status moon_update(Moon *moon, time_t now) {
 
     moon->phase = moon_calculate_phase(now);
     moon->cycle = moon_calculate_cycle(now);
+    if(moon->phase == UNKNOWN_PHASE || moon->phase == NEW || moon->phase == FULL) {
+        moon->cycle = UNKNOWN_CYCLE;
+    }
     moon->days_until_full = moon_calculate_days_until_full(now);
     moon->days_until_new = moon_calculate_days_until_new(now);
 

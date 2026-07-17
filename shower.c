@@ -49,9 +49,9 @@ struct _Shower { /* Estructura con la informacion que se pasará a otros modulos
  * @return El rango de intensidad de la propia lluvia de estrellas 
  */
 static ShowerIntensity num_comets_to_intensity(int num_comets) { /* Pasa el número de cometas a una intensidad definida */
-    if(num_comets <= 10) return NO_SHOWER;
-    else if(num_comets <= 50) return MINOR;
-    else if(num_comets <= 100) return MODERATE;
+    if(num_comets <= 5) return NO_SHOWER;
+    else if(num_comets <= 20) return MINOR;
+    else if(num_comets <= 50) return MODERATE;
 
     return MAJOR;
 }
@@ -366,6 +366,12 @@ int shower_get_num_showers(Shower *shower) {
     if(!shower) return -1;
 
     return shower->num_showers;
+}
+
+int shower_get_next_index(Shower *shower) {
+    if(!shower) return -1;
+
+    return shower->next_index;
 }
 
 /* DEBUG */

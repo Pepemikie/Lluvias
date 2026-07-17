@@ -117,6 +117,8 @@ int shower_get_days_until(Shower *shower);
  */
 int shower_get_num_showers(Shower *shower);
 
+int shower_get_next_index(Shower *shower);
+
 #ifdef DEBUG
 /** @brief Imprime la información de la lluvia
  * 
