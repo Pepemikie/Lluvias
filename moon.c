@@ -1,4 +1,14 @@
 
+/**
+ * @file moon.c
+ * @author José Miguel Romero Oubiña
+ * @brief Implementación de las funciones para obtener la información de la luna
+ * @version 0.1
+ * @date 2026-07-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +17,9 @@
 
 #include "moon.h"
 
+/** @brief Número de días en un ciclo lunar */
 #define MOON_CYCLE_DAYS 29.53058867
+/** @brief Referencia para luna nueva */
 #define REF_NEW_MOON 947182440
 
 struct _Moon {
@@ -18,6 +30,12 @@ struct _Moon {
 };
 
 /* PRIVADAS */
+/**
+ * @brief Calcula la fase de la luna en función de la fecha actual
+ * 
+ * @param now hora en formato time_t
+ * @return Fase de la luna 
+ */
 static Phases moon_calculate_phase(time_t now) {
     double days_since_ref_new_moon = 0;
     double phase =  0;
@@ -39,6 +57,12 @@ static Phases moon_calculate_phase(time_t now) {
     return NEW;
 }
 
+/** 
+ * @brief Calcula el ciclo de la luna en función de la fecha actual
+ * 
+ * @param now hora en formato time_t
+ * @return Ciclo de la luna
+ */
 static Cycle moon_calculate_cycle(time_t now) {
     double days_since_ref_new_moon = 0;
     double position = 0;
@@ -52,6 +76,12 @@ static Cycle moon_calculate_cycle(time_t now) {
     return WANING;
 }
 
+/** 
+ * @brief Calcula el número de días hasta el pleno de la luna
+ * 
+ * @param now hora en formato time_t
+ * @return Número de días hasta el pleno
+ */
 static int moon_calculate_days_until_full(time_t now) {
     double days_since_ref_new_moon = 0;
     double position = 0;
@@ -68,6 +98,12 @@ static int moon_calculate_days_until_full(time_t now) {
     return (int)((half + MOON_CYCLE_DAYS) - position);
 }
 
+/** 
+ * @brief Calcula el número de días hasta el nuevo de la luna
+ * 
+ * @param now hora en formato time_t
+ * @return Número de días hasta el nuevo
+ */
 static int moon_calculate_days_until_new(time_t now) {
     double days_since_ref_new_moon = 0;
     double position = 0;
@@ -81,6 +117,7 @@ static int moon_calculate_days_until_new(time_t now) {
 }
 
 /* PÚBLICAS */
+/* Crea una nueva instancia de la luna */
 Moon* moon_create() {
     Moon *moon = NULL;
 
@@ -95,6 +132,7 @@ Moon* moon_create() {
     return moon;
 }
 
+/* Destruye una instancia de la luna */
 void moon_destroy(Moon *moon) {
     if(!moon) return;
 
@@ -102,6 +140,7 @@ void moon_destroy(Moon *moon) {
     moon = NULL;
 }
 
+/* Actualiza la información de la luna */
 Status moon_update(Moon *moon, time_t now) {
     if(!moon) return ERROR;
     if(now == (time_t)-1) return ERROR;
@@ -117,24 +156,28 @@ Status moon_update(Moon *moon, time_t now) {
     return OK;
 }
 
+/* Obtiene la fase de la luna */
 Phases moon_get_phase(Moon *moon) {
     if(!moon) return UNKNOWN_PHASE;
 
     return moon->phase;
 }
 
+/* Obtiene el ciclo de la luna */
 Cycle  moon_get_cycle(Moon *moon) {
     if(!moon) return UNKNOWN_CYCLE;
 
     return moon->cycle;
 }
 
+/* Obtiene el número de días hasta el pleno de la luna */
 int moon_get_days_until_full(Moon *moon) {
     if(!moon) return -1;
 
     return moon->days_until_full;
 }
 
+/* Obtiene el número de días hasta el nuevo de la luna */
 int moon_get_days_until_new(Moon *moon) {
     if(!moon) return -1;
 
@@ -142,6 +185,7 @@ int moon_get_days_until_new(Moon *moon) {
 }
 
 #ifdef DEBUG
+/* Imprime la información de la luna */
 void moon_print(Moon *moon) {
     char phase[MAX_CHAR];
     char cycle[MAX_CHAR];

@@ -1,7 +1,7 @@
 /**
  * @file shower.c
  * @author José Miguel Romero Oubiña
- * @brief Implementación del modulo shower.c
+ * @brief Funciones para obtener la información de las lluvias de estrellas
  * @version 0.1
  * @date 2026-07-10
  * 
