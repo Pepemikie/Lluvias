@@ -7,7 +7,6 @@
 #include "shower.h"
 #include "moon.h"
 #include "clock.h"
-/*#include "arduino.h"*/
 
 int main() {
     Shower *shower = NULL;

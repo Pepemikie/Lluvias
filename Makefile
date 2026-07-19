@@ -2,7 +2,7 @@ all: athmosphere
 
 athmosphere: main.o shower.o moon.o clock.o #arduino.o
 	gcc main.o shower.o moon.o clock.o -o athmosphere -lm
-# arduino.o
+
 main.o: main.c
 	gcc -Wall -c main.c -o main.o
 
@@ -14,9 +14,6 @@ shower.o: shower.c
 
 clock.o: clock.c
 	gcc -Wall -c clock.c -o clock.o
-
-#arduino.o: arduino.c
-#	gcc -Wall arduino.o -c arduino.c
 
 run:
 	./athmosphere 

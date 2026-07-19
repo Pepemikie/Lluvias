@@ -291,7 +291,7 @@ time_t shower_get_event_time(Shower *shower) {
     struct tm event = {0};
 
     if(!shower) return (time_t)-1;
-    if(shower->next_index < 0 || shower->next_index >= shower->num_showers) return (time_t)-1;
+    if(shower->next_index < 0 || shower->next_index >= shower->num_showers) return (time_t) - 1;
 
     s = &shower->showers[shower->next_index];
     event.tm_mday = s->day;
@@ -322,6 +322,34 @@ Status shower_next(Shower *shower, struct tm now) {
     shower->visible = FALSE;
 
     return OK;
+}
+
+Status shower_prev(Shower *shower, struct tm now) {
+    ShowerArray *s = NULL;
+    int i = 0;
+    int days = -1;
+
+    if(!shower) return ERROR;
+    if(shower->next_index - 1 < 0) return ERROR; /* Ya estamos en la primera */
+
+    for(i = shower->next_index - 1; i >= 0; i--) {
+        days = days_between(&now, shower->showers[i].day, shower->showers[i].month, shower->showers[i].year);
+        if(days < 0) continue; /* Ya pasó ppr lo que no tiene sentido mostrarla */
+
+        s = &shower->showers[i];
+        shower->next_index = i;
+
+        strncpy(shower->shower_name, s->name, MAX_CHAR - 1);
+        shower->shower_name[MAX_CHAR - 1] = '\0';
+
+        shower->intensity = num_comets_to_intensity(s->num_comets);
+        shower->peak_hour = s->peak_hour;
+        shower->days_until = days;
+        shower->visible = FALSE;
+        return OK;
+    }
+
+    return ERROR; /* No hay lluvia anterior que sirva */
 }
 
 /* GETTERS */

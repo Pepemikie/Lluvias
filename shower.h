@@ -69,6 +69,8 @@ time_t shower_get_event_time(Shower *shower);
 
 Status shower_next(Shower *shower, struct tm now);
 
+Status shower_prev(Shower *shower, struct tm now);
+
 /**
  * @brief Obtiene el nombre de la lluvia
  * 
