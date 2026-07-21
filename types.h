@@ -16,4 +16,5 @@ typedef enum {UNKNOWN_CYCLE, WAXING, WANING} Cycle;
 /* Shower */
 typedef enum {UNKNOWN_INTENSITY, NO_SHOWER, MINOR, MODERATE, MAJOR} ShowerIntensity;
 
+typedef enum {MENU_MAIN, MENU_SHOWER, MENU_MOON} MenuState;
 #endif
